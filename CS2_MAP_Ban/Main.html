@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CS:GO 팀 A 맵별 예상 승률 및 추천 금지 맵</title>
+    <link rel="stylesheet" href="Main.css">
+</head>
+<body>
+    <h2>CS:GO 팀 A 맵별 예상 승률</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>맵</th>
+                <th>예상 승률</th>
+            </tr>
+        </thead>
+        <tbody id="teamA_predictions">
+            <!-- 여기에 JavaScript로 데이터를 추가할 예정 -->
+        </tbody>
+    </table>
+
+    <h2>추천 금지 맵</h2>
+    <table id="recommended_bans_table">
+        <thead>
+            <tr>
+                <th>맵</th>
+            </tr>
+        </thead>
+        <tbody id="recommended_bans">
+            <!-- 여기에 JavaScript로 데이터를 추가할 예정 -->
+        </tbody>
+    </table>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('team_a_map_recommendations.json')
+                .then(response => response.json())
+                .then(data => {
+                    const teamAPredictions = document.getElementById('teamA_predictions');
+                    const recommendedBans = document.getElementById('recommended_bans');
+
+                    // 맵 이름과 이미지 링크 객체
+                    const mapsData = {
+                        'de_dust2': {
+                            name: 'Dust 2',
+                            image: 'images/de_dust2.jpg'
+                        },
+                        'de_inferno': {
+                            name: 'Inferno',
+                            image: 'images/de_inferno.jpg'
+                        },
+                        'de_mirage': {
+                            name: 'Mirage',
+                            image: 'images/de_mirage.jpg'
+                        },
+                        'de_nuke': {
+                            name: 'Nuke',
+                            image: 'images/de_nuke.jpg'
+                        },
+                        'de_overpass': {
+                            name: 'Overpass',
+                            image: 'images/de_overpass.jpg'
+                        },
+                        'de_vertigo': {
+                            name: 'Vertigo',
+                            image: 'images/de_vertigo.jpg'
+                        }
+                    };
+
+                    // 팀 A 맵별 예상 승률 추가
+                    const teamAData = data.team_A_map_predictions;
+                    for (const [map, winRate] of Object.entries(teamAData)) {
+                        const tr = document.createElement('tr');
+                        const tdMap = document.createElement('td');
+                        const tdWinRate = document.createElement('td');
+                        const img = document.createElement('img');
+
+                        // 이미지와 맵 이름 추가
+                        img.src = mapsData[map].image;
+                        img.alt = mapsData[map].name;
+                        img.style.width = '100px'; // 이미지 크기 조절
+
+                        tdMap.appendChild(img);
+                        tdMap.innerHTML += `<br>${mapsData[map].name}`; // 줄 바꿈과 맵 이름 추가
+
+                        // 예상 승률 추가
+                        tdWinRate.textContent = `${winRate.toFixed(2)}%`;
+
+                        tr.appendChild(tdMap);
+                        tr.appendChild(tdWinRate);
+                        teamAPredictions.appendChild(tr);
+                    }
+
+                    // 추천 금지 맵 표 생성
+                    const recommendedBansTable = document.getElementById('recommended_bans');
+                    const bansData = data.recommended_bans;
+                    bansData.forEach(map => {
+                        const tr = document.createElement('tr');
+                        const tdMap = document.createElement('td');
+                        const img = document.createElement('img');
+
+                        // 이미지와 맵 이름 추가
+                        img.src = mapsData[map].image;
+                        img.alt = mapsData[map].name;
+                        img.style.width = '100px'; // 이미지 크기 조절
+
+                        tdMap.appendChild(img);
+                        tdMap.innerHTML += `<br>${mapsData[map].name}`; // 줄 바꿈과 맵 이름 추가
+
+                        tr.appendChild(tdMap);
+                        recommendedBansTable.appendChild(tr);
+                    });
+                })
+                .catch(error => console.error('Error loading the JSON file:', error));
+        });
+    </script>
+</body>
+</html>
